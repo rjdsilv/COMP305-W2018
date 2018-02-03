@@ -47,17 +47,16 @@ public class EnemyMover : MonoBehaviour
             enemyRigidbody.velocity *= -1;
         }
 
+        // When sees the player, enter in attack mode!!!
         if (IsSeeingPlayer())
         {
-            if (state != State.ATTACK)
-            {
-                state = State.ATTACK;
-                enemyRenderer.color = Color.red;
-                enemyRigidbody.velocity = enemyRigidbody.velocity.normalized * attackSpeed;
-            }
+            state = State.ATTACK;
+            enemyRenderer.color = Color.red;
+            enemyRigidbody.velocity = enemyRigidbody.velocity.normalized * attackSpeed;
         }
         else
         {
+            // No longer seeing the player. If enemy was in attack mode, enter in seek mode.
             if (state == State.ATTACK)
             {
                 state = State.SEEK;
@@ -65,6 +64,8 @@ public class EnemyMover : MonoBehaviour
                 enemyRenderer.color = Color.yellow;
                 enemyRigidbody.velocity = enemyRigidbody.velocity.normalized * seekSpeed;
             }
+            // If the player is not being seen and enemy is seeking, keep in seeking state for the defined time.
+            // After that, enter in patrol mode.
             else if (state == State.SEEK)
             {
                 if (Time.time - startSeekTime > seekTime)
