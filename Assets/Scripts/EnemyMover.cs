@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class EnemyMover : MonoBehaviour
 {
@@ -6,7 +7,10 @@ public class EnemyMover : MonoBehaviour
     public float patrolSpeed;
     public float seekSpeed;
     public float attackSpeed;
+    public float viewDistance;
+    public float seekTime;
 
+    private float startSeekTime;
     private State state;
     private Rigidbody2D enemyRigidbody;
     private SpriteRenderer enemyRenderer;
@@ -42,5 +46,40 @@ public class EnemyMover : MonoBehaviour
             transform.Rotate(new Vector3(0, 0, 180));
             enemyRigidbody.velocity *= -1;
         }
+
+        if (IsSeeingPlayer())
+        {
+            if (state != State.ATTACK)
+            {
+                state = State.ATTACK;
+                enemyRenderer.color = Color.red;
+                enemyRigidbody.velocity = enemyRigidbody.velocity.normalized * attackSpeed;
+            }
+        }
+        else
+        {
+            if (state == State.ATTACK)
+            {
+                state = State.SEEK;
+                startSeekTime = Time.time;
+                enemyRenderer.color = Color.yellow;
+                enemyRigidbody.velocity = enemyRigidbody.velocity.normalized * seekSpeed;
+            }
+            else if (state == State.SEEK)
+            {
+                if (Time.time - startSeekTime > seekTime)
+                {
+                    state = State.PATROL;
+                    enemyRenderer.color = Color.green;
+                    enemyRigidbody.velocity = enemyRigidbody.velocity.normalized * patrolSpeed;
+                }
+            }
+        }
+    }
+
+    bool IsSeeingPlayer()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.GetChild(0).position, enemyRigidbody.velocity.normalized);
+        return ((null != hit.collider) && (hit.collider.tag == "Player"));
     }
 }
