@@ -160,7 +160,7 @@ Prefab:
     - target: {fileID: 114294839469515698, guid: 8d6d47d230fe8cf438be132b73154681,
         type: 2}
       propertyPath: spawnRadius
-      value: 4
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 114294839469515698, guid: 8d6d47d230fe8cf438be132b73154681,
         type: 2}
@@ -227,7 +227,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 15
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

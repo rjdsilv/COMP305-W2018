@@ -19,14 +19,8 @@ public class MemberMover : MonoBehaviour
     // Called once per frame.
     void FixedUpdate()
     {
-        memberRigidbody.velocity = transform.position - MousePosition;
-        memberRigidbody.velocity = MousePosition * memberConfiguration.speed;
-
-        var alignment = ComputeAlignment();
-        var cohesion = ComputeCohesion();
-        var separation = ComputeSeparation();
-
-        memberRigidbody.velocity += 10 * alignment + 2 * cohesion + 7 * separation;
+        memberRigidbody.velocity = (MousePosition - transform.position) * memberConfiguration.speed;
+        memberRigidbody.velocity += 5 * ComputeAlignment() + 2 * ComputeCohesion() + 7 * ComputeSeparation();
         memberRigidbody.velocity = memberRigidbody.velocity.normalized * memberConfiguration.speed;
     }
 

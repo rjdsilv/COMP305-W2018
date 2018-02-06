@@ -91,9 +91,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   memberConfiguration:
     speed: 5
-    separationRadius: 0.5
-    cohesionRadius: 5
-    alignmentRadius: 30
+    separationRadius: 1.5
+    cohesionRadius: 2
+    alignmentRadius: 5
 --- !u!212 &212355796930478632
 SpriteRenderer:
   m_ObjectHideFlags: 1
