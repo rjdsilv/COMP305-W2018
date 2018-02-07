@@ -160,7 +160,7 @@ Prefab:
     - target: {fileID: 114294839469515698, guid: 8d6d47d230fe8cf438be132b73154681,
         type: 2}
       propertyPath: spawnRadius
-      value: 3.5
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 114294839469515698, guid: 8d6d47d230fe8cf438be132b73154681,
         type: 2}

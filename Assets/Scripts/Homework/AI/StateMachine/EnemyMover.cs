@@ -25,16 +25,11 @@ public class EnemyMover : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        // Initial State.
-        state = State.PATROL;
-
-        // Setting the initial render status.
         enemyRenderer = GetComponent<SpriteRenderer>();
-        enemyRenderer.color = Color.green;
-
-        // Setting the initial velocity.
         enemyRigidbody = GetComponent<Rigidbody2D>();
-        enemyRigidbody.velocity = Vector2.left * patrolSpeed;
+        enemyRigidbody.velocity = Vector2.left;
+
+        Patrol();
 	}
 	
 	// FixedUpdate is called once per frame with time consistency.
@@ -47,40 +42,71 @@ public class EnemyMover : MonoBehaviour
             enemyRigidbody.velocity *= -1;
         }
 
-        // When sees the player, enter in attack mode!!!
-        if (IsSeeingPlayer())
-        {
-            state = State.ATTACK;
-            enemyRenderer.color = Color.red;
-            enemyRigidbody.velocity = enemyRigidbody.velocity.normalized * attackSpeed;
-        }
-        else
-        {
-            // No longer seeing the player. If enemy was in attack mode, enter in seek mode.
-            if (state == State.ATTACK)
-            {
-                state = State.SEEK;
-                startSeekTime = Time.time;
-                enemyRenderer.color = Color.yellow;
-                enemyRigidbody.velocity = enemyRigidbody.velocity.normalized * seekSpeed;
-            }
-            // If the player is not being seen and enemy is seeking, keep in seeking state for the defined time.
-            // After that, enter in patrol mode.
-            else if (state == State.SEEK)
-            {
-                if (Time.time - startSeekTime > seekTime)
-                {
-                    state = State.PATROL;
-                    enemyRenderer.color = Color.green;
-                    enemyRigidbody.velocity = enemyRigidbody.velocity.normalized * patrolSpeed;
-                }
-            }
-        }
+        ApplyStateChanges();
     }
 
     bool IsSeeingPlayer()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.GetChild(0).position, enemyRigidbody.velocity.normalized);
         return ((null != hit.collider) && (hit.collider.tag == "Player"));
+    }
+
+    void ApplyStateChanges()
+    {
+        switch(state)
+        {
+            case State.PATROL:
+                // When sees the player, enter in attack mode!!!
+                if (IsSeeingPlayer())
+                {
+                    Attack();
+                }
+                break;
+
+            case State.ATTACK:
+                // No longer seeing the player. If enemy was in attack mode, enter in seek mode.
+                if (!IsSeeingPlayer())
+                {
+                    Seek();
+                }
+                break;
+
+            case State.SEEK:
+                // If the player is not being seen and enemy is seeking, keep in seeking state for the defined time. After that, enter in patrol mode.
+                if (!IsSeeingPlayer())
+                {
+                    if (Time.time - startSeekTime > seekTime)
+                    {
+                        Patrol();
+                    }
+                }
+                else
+                {
+                    Attack();
+                }
+                break;
+        }
+    }
+
+    void Attack()
+    {
+        state = State.ATTACK;
+        enemyRenderer.color = Color.red;
+        enemyRigidbody.velocity = enemyRigidbody.velocity.normalized * attackSpeed;
+    }
+
+    void Seek()
+    {
+        state = State.SEEK;
+        startSeekTime = Time.time;
+        enemyRenderer.color = Color.yellow;
+        enemyRigidbody.velocity = enemyRigidbody.velocity.normalized * seekSpeed;
+    }
+
+    void Patrol()
+    {
+        state = State.PATROL;
+        enemyRenderer.color = Color.green;
+        enemyRigidbody.velocity = enemyRigidbody.velocity.normalized * patrolSpeed;
     }
 }
