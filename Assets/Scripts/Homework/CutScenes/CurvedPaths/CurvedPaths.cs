@@ -6,8 +6,6 @@ public class CurvedPaths : MonoBehaviour
     public Transform curvePoint;
     public Transform catmullRomButton;
 
-    private bool drawCurve = false;
-    private bool isLooping = true;
     private LineRenderer lineRenderer;
     private List<Transform> curvePoints = new List<Transform>();
 
@@ -53,7 +51,7 @@ public class CurvedPaths : MonoBehaviour
     {
         lineRenderer.positionCount = 0;
         List<Vector3> drawingPositions = new List<Vector3>();
-        for (int i = 0; i < curvePoints.Count; i++)
+        for (int i = 0; i < curvePoints.Count - 1; i++)
         {
             Vector3 p0 = curvePoints[ClampPos(i - 1)].position;
             Vector3 p1 = curvePoints[i].position;
@@ -81,16 +79,11 @@ public class CurvedPaths : MonoBehaviour
     {
         if (pos < 0)
         {
-            pos = curvePoints.Count - 1;
-        }
-
-        if (pos > curvePoints.Count)
-        {
-            pos = 1;
-        }
-        else if (pos > curvePoints.Count - 1)
-        {
             pos = 0;
+        }
+        else  if (pos > curvePoints.Count - 1)
+        {
+            pos = curvePoints.Count - 1;
         }
 
         return pos;
