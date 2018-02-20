@@ -228,7 +228,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &1158758968
 BoxCollider2D:
@@ -266,7 +266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f20864f2bd6c6c428fa0447b45340f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  curveResolution: 0.01
+  curveResolution: 0.001
   curvePoint: {fileID: 4109956266739648, guid: 604292869e66c384e995e562bb1ff51d, type: 2}
   catmullRomButton: {fileID: 2113155769}
   bezierButton: {fileID: 904441662}
@@ -435,7 +435,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4113182792181510, guid: 6b00674405b8848419acd7516940e699, type: 2}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6b00674405b8848419acd7516940e699, type: 2}
