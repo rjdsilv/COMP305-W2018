@@ -266,7 +266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f20864f2bd6c6c428fa0447b45340f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  curveResolution: 0.001
+  curveResolution: 0.01
   curvePoint: {fileID: 4109956266739648, guid: 604292869e66c384e995e562bb1ff51d, type: 2}
   catmullRomButton: {fileID: 2113155769}
   bezierButton: {fileID: 904441662}
