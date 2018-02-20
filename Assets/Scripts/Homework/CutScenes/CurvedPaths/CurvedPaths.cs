@@ -1,23 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CurvedPaths : MonoBehaviour
 {
+    public float curveResolution = 0.01f;
     public Transform curvePoint;
     public Transform catmullRomButton;
+    public Transform bezierButton;
 
     private LineRenderer lineRenderer;
     private List<Transform> curvePoints = new List<Transform>();
 
     public enum CurveType
     {
-        CATMULL_ROM
+        CATMULL_ROM, BEZIER
     }
 
     private void Start()
     {
         lineRenderer = GetComponent<LineRenderer>();
         catmullRomButton.gameObject.SetActive(false);
+        bezierButton.gameObject.SetActive(false);
     }
 
     private void OnMouseDown()
@@ -30,9 +34,10 @@ public class CurvedPaths : MonoBehaviour
                 curvePoints.Add(Instantiate(curvePoint, clickedPosition, Quaternion.identity));
             }
 
-            if (curvePoints.Count >= 4)
+            if (curvePoints.Count >= 3)
             {
                 catmullRomButton.gameObject.SetActive(true);
+                bezierButton.gameObject.SetActive(true);
             }
         }
     }
@@ -44,13 +49,21 @@ public class CurvedPaths : MonoBehaviour
             case CurveType.CATMULL_ROM:
                 DrawCatmullRomCurve();
                 break;
+
+            case CurveType.BEZIER:
+                DrawBezierCurve();
+                break;
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///// CATMULL ROM
 
     private void DrawCatmullRomCurve()
     {
         lineRenderer.positionCount = 0;
         List<Vector3> drawingPositions = new List<Vector3>();
+
         for (int i = 0; i < curvePoints.Count - 1; i++)
         {
             Vector3 p0 = curvePoints[ClampPos(i - 1)].position;
@@ -59,17 +72,13 @@ public class CurvedPaths : MonoBehaviour
             Vector3 p3 = curvePoints[ClampPos(i + 2)].position;
 
             drawingPositions.Add(p1);
-
-            float resolution = 0.01f;
-            int loops = Mathf.FloorToInt(1f / resolution);
-
-            lineRenderer.positionCount = loops;
-            for (int j = 1; j <= loops; j++)
+            for (int j = 1, loops = Mathf.FloorToInt(1f / curveResolution); j <= loops; j++)
             {
-                float t = j * resolution;
+                float t = j * curveResolution;
                 drawingPositions.Add(GetCatmullRomPosition(t, p0, p1, p2, p3));
             }
         }
+
         lineRenderer.positionCount = drawingPositions.Count;
         lineRenderer.SetPositions(drawingPositions.ToArray());
         drawingPositions.Clear();
@@ -101,5 +110,62 @@ public class CurvedPaths : MonoBehaviour
         Vector3 pos = 0.5f * (a + (b * t) + (c * t * t) + (d * t * t * t));
 
         return pos;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///// BEZIER
+
+    private void DrawBezierCurve()
+    {
+        List<Vector3> drawingPositions = new List<Vector3>();
+
+        drawingPositions.Add(curvePoints[0].position);
+        for (int i = 1, loops = Mathf.FloorToInt(1f / curveResolution); i <= loops; i++)
+        {
+            drawingPositions.Add(GetBezierPosition(curvePoints, i * curveResolution));
+        }
+        drawingPositions.Add(curvePoints[curvePoints.Count - 1].position);
+
+        lineRenderer.positionCount = drawingPositions.Count;
+        lineRenderer.SetPositions(drawingPositions.ToArray());
+        drawingPositions.Clear();
+    }
+
+    private Vector3 GetBezierPosition(List<Transform> positions, float t)
+    {
+        Vector3 p = Vector3.zero;
+        for (int i = 0; i < positions.Count; i++)
+        {
+            p += positions[i].position * CalculateBernsteinPolynomial(i, positions.Count - 1, t);
+        }
+        return p;
+    }
+
+    private float CalculateBernsteinPolynomial(int i, int n, float t)
+    {
+        return CalculateNewtonBinomial(n, i) * Mathf.Pow(t, i) * Mathf.Pow(1f - t, n - i);
+    }
+
+    private float CalculateNewtonBinomial(int n, int i)
+    {
+        float binomial = 1.0f;
+
+        for (int k = n; k > Mathf.Max(i, n - i); k--)
+        {
+            binomial *= k;
+        }
+        binomial *= CalculateFactorial(Mathf.Min(n, i));
+
+        return binomial;
+    }
+
+    private int CalculateFactorial(int n)
+    {
+        if (n == 0)
+        {
+            return 1;
+        }
+
+        return CalculateFactorial(n - 1);
     }
 }
