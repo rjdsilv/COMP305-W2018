@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CurvedPaths : MonoBehaviour
 {
     public float curveResolution = 0.01f;
+    public float timeFrame = 0.04f;
     public Vector3 tangent = new Vector3(0, 0, 0);
     public Transform curvePoint;
+    public Transform curveWalker;
     public Transform catmullRomButton;
     public Transform bezierButton;
     public Transform cubicHermiteButton;
@@ -20,10 +23,12 @@ public class CurvedPaths : MonoBehaviour
 
     private void Start()
     {
+        curveWalker = Instantiate(curveWalker);
         lineRenderer = GetComponent<LineRenderer>();
         catmullRomButton.gameObject.SetActive(false);
         bezierButton.gameObject.SetActive(false);
         cubicHermiteButton.gameObject.SetActive(false);
+        curveWalker.gameObject.SetActive(false);
     }
 
     private void OnMouseDown()
@@ -47,18 +52,19 @@ public class CurvedPaths : MonoBehaviour
 
     public void DrawCurve(CurveType curveType)
     {
+        curveWalker.gameObject.SetActive(true);
         switch (curveType)
         {
             case CurveType.CATMULL_ROM:
-                DrawCatmullRomCurve();
+                StartCoroutine(DrawCatmullRomCurve());
                 break;
 
             case CurveType.BEZIER:
-                DrawBezierCurve();
+                StartCoroutine(DrawBezierCurve());
                 break;
 
             case CurveType.CUBIC_HERMITE:
-                DrawCubicHermiteCurve();
+                StartCoroutine(DrawCubicHermiteCurve());
                 break;
         }
     }
@@ -66,11 +72,8 @@ public class CurvedPaths : MonoBehaviour
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///// CATMULL ROM
 
-    private void DrawCatmullRomCurve()
+    private IEnumerator DrawCatmullRomCurve()
     {
-        lineRenderer.positionCount = 0;
-        List<Vector3> drawingPositions = new List<Vector3>();
-
         for (int i = 0; i < curvePoints.Count - 1; i++)
         {
             Vector3 p0 = curvePoints[ClampPos(i - 1)].position;
@@ -78,17 +81,13 @@ public class CurvedPaths : MonoBehaviour
             Vector3 p2 = curvePoints[ClampPos(i + 1)].position;
             Vector3 p3 = curvePoints[ClampPos(i + 2)].position;
 
-            drawingPositions.Add(p1);
             for (int j = 1, loops = Mathf.FloorToInt(1f / curveResolution); j <= loops; j++)
             {
                 float t = j * curveResolution;
-                drawingPositions.Add(GetCatmullRomPosition(t, p0, p1, p2, p3));
+                curveWalker.position = GetCatmullRomPosition(t, p0, p1, p2, p3);
+                yield return new WaitForSeconds(timeFrame);
             }
         }
-
-        lineRenderer.positionCount = drawingPositions.Count;
-        lineRenderer.SetPositions(drawingPositions.ToArray());
-        drawingPositions.Clear();
     }
 
     private int ClampPos(int pos)
@@ -119,20 +118,16 @@ public class CurvedPaths : MonoBehaviour
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///// BEZIER
 
-    private void DrawBezierCurve()
+    private IEnumerator DrawBezierCurve()
     {
-        List<Vector3> drawingPositions = new List<Vector3>();
-
-        drawingPositions.Add(curvePoints[0].position);
+        curveWalker.position = curvePoints[0].position;
         for (int i = 1, loops = Mathf.FloorToInt(1f / curveResolution); i <= loops; i++)
         {
-            drawingPositions.Add(GetBezierPosition(curvePoints, i * curveResolution));
-        }
-        drawingPositions.Add(curvePoints[curvePoints.Count - 1].position);
+            curveWalker.position = GetBezierPosition(curvePoints, i * curveResolution);
+            yield return new WaitForSeconds(timeFrame);
 
-        lineRenderer.positionCount = drawingPositions.Count;
-        lineRenderer.SetPositions(drawingPositions.ToArray());
-        drawingPositions.Clear();
+        }
+        curveWalker.position = curvePoints[curvePoints.Count - 1].position;
     }
 
     private Vector3 GetBezierPosition(List<Transform> positions, float t)
@@ -176,7 +171,7 @@ public class CurvedPaths : MonoBehaviour
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///// CUBIC HERMITE
 
-    private void DrawCubicHermiteCurve()
+    private IEnumerator DrawCubicHermiteCurve()
     {
         List<Vector3> drawingPositions = new List<Vector3>();
 
@@ -184,14 +179,11 @@ public class CurvedPaths : MonoBehaviour
         {
             for (int j = 1, loops = Mathf.FloorToInt(1f / curveResolution); j <= loops; j++)
             {
-                drawingPositions.Add(GetCubicHermitePosition(j * curveResolution, curvePoints[i].position, curvePoints[ClampPos(i + 1)].position));
+                curveWalker.position = GetCubicHermitePosition(j * curveResolution, curvePoints[i].position, curvePoints[ClampPos(i + 1)].position);
+                yield return new WaitForSeconds(timeFrame);
             }
         }
-    
-        lineRenderer.positionCount = drawingPositions.Count;
-        lineRenderer.SetPositions(drawingPositions.ToArray());
-        drawingPositions.Clear();
-}
+    }
 
     private Vector3 GetCubicHermitePosition(float t, Vector3 p0, Vector3 p1)
     {

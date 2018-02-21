@@ -314,8 +314,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   curveResolution: 0.01
+  timeFrame: 0.01
   tangent: {x: 2, y: 5, z: 0}
   curvePoint: {fileID: 4109956266739648, guid: 604292869e66c384e995e562bb1ff51d, type: 2}
+  curveWalker: {fileID: 4814797906170524, guid: 0c6881e5fa6f9bb4c98b11c2e1d7410d,
+    type: 2}
   catmullRomButton: {fileID: 2113155769}
   bezierButton: {fileID: 904441662}
   cubicHermiteButton: {fileID: 12643893}
