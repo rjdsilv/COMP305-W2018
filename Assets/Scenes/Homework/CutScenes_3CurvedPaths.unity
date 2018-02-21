@@ -113,6 +113,53 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!4 &12643893 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4341420827204240, guid: a2bbc55c5c82fc9428af1d2de5203e4f,
+    type: 2}
+  m_PrefabInternal: {fileID: 613165642}
+--- !u!1001 &613165642
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4341420827204240, guid: a2bbc55c5c82fc9428af1d2de5203e4f, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341420827204240, guid: a2bbc55c5c82fc9428af1d2de5203e4f, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341420827204240, guid: a2bbc55c5c82fc9428af1d2de5203e4f, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341420827204240, guid: a2bbc55c5c82fc9428af1d2de5203e4f, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341420827204240, guid: a2bbc55c5c82fc9428af1d2de5203e4f, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341420827204240, guid: a2bbc55c5c82fc9428af1d2de5203e4f, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341420827204240, guid: a2bbc55c5c82fc9428af1d2de5203e4f, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341420827204240, guid: a2bbc55c5c82fc9428af1d2de5203e4f, type: 2}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: a2bbc55c5c82fc9428af1d2de5203e4f, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &639419119
 GameObject:
   m_ObjectHideFlags: 0
@@ -267,9 +314,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   curveResolution: 0.01
+  tangent: {x: 2, y: 5, z: 0}
   curvePoint: {fileID: 4109956266739648, guid: 604292869e66c384e995e562bb1ff51d, type: 2}
   catmullRomButton: {fileID: 2113155769}
   bezierButton: {fileID: 904441662}
+  cubicHermiteButton: {fileID: 12643893}
 --- !u!120 &1158758970
 LineRenderer:
   m_ObjectHideFlags: 0

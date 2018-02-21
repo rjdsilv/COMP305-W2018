@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class CurvedPaths : MonoBehaviour
 {
     public float curveResolution = 0.01f;
+    public Vector3 tangent = new Vector3(0, 0, 0);
     public Transform curvePoint;
     public Transform catmullRomButton;
     public Transform bezierButton;
+    public Transform cubicHermiteButton;
 
     private LineRenderer lineRenderer;
     private List<Transform> curvePoints = new List<Transform>();
 
     public enum CurveType
     {
-        CATMULL_ROM, BEZIER
+        CATMULL_ROM, BEZIER, CUBIC_HERMITE
     }
 
     private void Start()
@@ -22,6 +23,7 @@ public class CurvedPaths : MonoBehaviour
         lineRenderer = GetComponent<LineRenderer>();
         catmullRomButton.gameObject.SetActive(false);
         bezierButton.gameObject.SetActive(false);
+        cubicHermiteButton.gameObject.SetActive(false);
     }
 
     private void OnMouseDown()
@@ -38,6 +40,7 @@ public class CurvedPaths : MonoBehaviour
             {
                 catmullRomButton.gameObject.SetActive(true);
                 bezierButton.gameObject.SetActive(true);
+                cubicHermiteButton.gameObject.SetActive(true);
             }
         }
     }
@@ -52,6 +55,10 @@ public class CurvedPaths : MonoBehaviour
 
             case CurveType.BEZIER:
                 DrawBezierCurve();
+                break;
+
+            case CurveType.CUBIC_HERMITE:
+                DrawCubicHermiteCurve();
                 break;
         }
     }
@@ -100,13 +107,10 @@ public class CurvedPaths : MonoBehaviour
 
     private Vector3 GetCatmullRomPosition(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
     {
-        //The coefficients of the cubic polynomial (except the 0.5f * which I added later for performance)
         Vector3 a = 2f * p1;
         Vector3 b = p2 - p0;
         Vector3 c = 2f * p0 - 5f * p1 + 4f * p2 - p3;
         Vector3 d = -p0 + 3f * p1 - 3f * p2 + p3;
-
-        //The cubic polynomial: a + b * t + c * t^2 + d * t^3
         Vector3 pos = 0.5f * (a + (b * t) + (c * t * t) + (d * t * t * t));
 
         return pos;
@@ -167,5 +171,36 @@ public class CurvedPaths : MonoBehaviour
         }
 
         return CalculateFactorial(n - 1);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///// CUBIC HERMITE
+
+    private void DrawCubicHermiteCurve()
+    {
+        List<Vector3> drawingPositions = new List<Vector3>();
+
+        for (int i = 0; i < curvePoints.Count - 1; i++)
+        {
+            for (int j = 1, loops = Mathf.FloorToInt(1f / curveResolution); j <= loops; j++)
+            {
+                drawingPositions.Add(GetCubicHermitePosition(j * curveResolution, curvePoints[i].position, curvePoints[ClampPos(i + 1)].position));
+            }
+        }
+    
+        lineRenderer.positionCount = drawingPositions.Count;
+        lineRenderer.SetPositions(drawingPositions.ToArray());
+        drawingPositions.Clear();
+}
+
+    private Vector3 GetCubicHermitePosition(float t, Vector3 p0, Vector3 p1)
+    {
+        float h0 = 2 * Mathf.Pow(t, 3) - 3 * Mathf.Pow(t, 2) + 1;
+        float h1 = Mathf.Pow(t, 3) - 2 * Mathf.Pow(t, 2) + t;
+        float h2 = -2 * Mathf.Pow(t, 3) + 3 * Mathf.Pow(t, 2);
+        float h3 = Mathf.Pow(t, 3) - Mathf.Pow(t, 2);
+        Vector3 pt = (h0 * p0 + h1 * tangent + h2 * p1 + h3 * tangent);
+
+        return pt;
     }
 }
