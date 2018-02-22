@@ -238,7 +238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 752050f60d46d2e45a8976e209cc0add, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3
+  speed: 2
   pathPoint: {fileID: 4161388659411676, guid: b50943eecb00fe945b81f520b6c05622, type: 2}
   startButton: {fileID: 1540833866313622, guid: fbaa15e12093b8f419770dfe7324fe97,
     type: 2}
@@ -326,6 +326,11 @@ Prefab:
     - target: {fileID: 1807289528035312, guid: 0d586181bc562f146bc510cc1fc25f4a, type: 2}
       propertyPath: m_TagString
       value: GameController
+      objectReference: {fileID: 0}
+    - target: {fileID: 114820683712786694, guid: 0d586181bc562f146bc510cc1fc25f4a,
+        type: 2}
+      propertyPath: speed
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0d586181bc562f146bc510cc1fc25f4a, type: 2}
